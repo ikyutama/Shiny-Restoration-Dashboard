@@ -1,0 +1,177 @@
+dashboardPage( skin = "green",
+               
+               # Fungsi dashboardHeader() adalah bagian untuk membuat header
+               dashboardHeader(title = "Restoration Dashboard", titleWidth = 381),
+               
+               # Fungsi dashboardSidebar() adalah bagian untuk membuat sidebar
+               dashboardSidebar(width = 381,
+                                sidebarMenu(
+                                  menuItem(
+                                    text = "Overview",
+                                    tabName = "overview",
+                                    icon = icon("gauge")
+                                  ),
+                                  menuItem(
+                                    text = "Pohon",
+                                    tabName = "pohon",
+                                    icon = icon("tree")
+                                  ),
+                                  menuItem(
+                                    text = "CO2",
+                                    tabName = "pohon",
+                                    icon = icon("tree")
+                                  ),
+                                  
+                                  menuItem(
+                                    text = "Dataset",
+                                    tabName = "dataset",
+                                    icon = icon("server")
+                                  ),
+                                  menuItem(
+                                    text= "Github",
+                                    href = "https://github.com/ikyutama/",
+                                    icon = icon("github")
+                                  )
+                                )
+               ),
+               dashboardBody(
+                 tabItems(
+                   tabItem(
+                     tabName="overview",
+                     fluidPage(
+                       h2(tags$b("Restoration Dashboard")),
+                       br(),
+                       div(style = "text-align:justify", 
+                           p("Dashboard ini berisi beberapa visualisasi untuk menampilak hasil monitoring pohon pada restorasi lahan disebuah daerah di Sumatera.", 
+                             "Dashboad ini dapat melihat berapa banyak pohon yang ditanama, species poho, tinggi pohon dalam satuan meter, dan berapa total carbon emission yg sudah di reduce dalam satuan ton"),
+                           tagList("Sumber data dari CIFOR-ICRAF:", a("Website", href="https://www.cifor-icraf.org/")),
+                           br(),
+                       ),
+                       br(),
+                       
+                     ),
+                     
+                     fluidRow(
+                       valueBox(subtitle = "Total Pohon",
+                                width = 4,
+                                value = comma(sum(monitoring_clean$total_tree)),
+                                color = "aqua",
+                                icon = icon("tree"),
+                                ),
+                       valueBox(subtitle = "Total Species Pohon",
+                                width = 4,
+                                value = length(unique(monitoring_clean$species_name)),
+                                color = "purple",
+                                icon = icon("pagelines"),
+                       ),
+                       valueBox(subtitle = "Total Total CO2e (Ton)",
+                                width = 4,
+                                value = comma(sum(monitoring_clean$total_carbon_reduce), accuracy = 0.01),
+                                color = "orange",
+                                icon = icon("temperature-empty"),
+                       ),
+                       
+                     ),
+                     
+                     fluidRow(
+                       box(
+                         title = "TOP 5 Species penghasil CO2e terbanyak",
+                         solidHeader = TRUE,
+                         status = "primary",
+                         width = 6,
+                         plotlyOutput("plot_top_co2e")
+                       ),
+                       box(
+                         title = "Total Pohon per Species",
+                         solidHeader = TRUE,
+                         status = "warning",
+                         width = 6,
+                         plotOutput(outputId = "doughnut_overview")
+                       )
+                     )
+                   ),
+                   
+                   # Menu Pohon
+                   tabItem(
+                       tabName="pohon",
+                       fluidRow(
+                         box(width = 6,
+                             selectInput(
+                               inputId = "select_planting",
+                               label = "Pilih Sistem Tanam",
+                               choices = unique(monitoring_clean$tree_planting_system)
+                             )
+                         ),
+                         box(
+                           width = 6,
+                           dateRangeInput("daterange", "Rentang Tanggal Monitoring:",
+                                          start  = "2024-04-01",
+                                          end    = "2024-04-30",
+                                          min    = "2024-01-01",
+                                          max    = "2024-04-30",
+                                          format = "yyyy-mm-dd",
+                                          separator = " sampai ")
+                         )
+                     ),
+                     
+                     fluidRow(
+                       box(
+                         width = 12,
+                         title = "Rata-rata Tinggi Pohon",
+                         solidHeader = TRUE,
+                         status = "danger",
+                         plotlyOutput(outputId = "visual_pohon_1")
+                       ),
+                     ),
+                     fluidRow(
+                       box(
+                         width = 6,
+                         title = "Average Salary by Working Year",
+                         solidHeader = TRUE,
+                         status = "warning",
+                         #plotlyOutput(outputId = "plot_experience_2")
+                       )
+                     )
+                   ),
+                   
+                   # Dataset Content
+                   tabItem(
+                     tabName="dataset",
+                     fluidPage(
+                       h2(tags$b("Restoration Dataset")),
+                       br(),
+                       div(style = "text-align:justify", 
+                           p("Berikut sedikit penjelasan mengenai kolom yang ada pada dataset dibawah ini :")
+                       ),
+                       tags$ul(
+                         tags$li("monitoring_id : Unique ID dari data monitoring"),
+                         tags$li("species_name : Nama species dari pohon yang ditanam"),
+                         tags$li("tree_planting_date : tanggal dilakukan penanaman pohon"),
+                         tags$li("date_monitoring : tanggal dilakukannya pengukuran tinggi pohon"),
+                         tags$li("total_tree : jumlah total pohon saat dilakukan pengkuran"),
+                         tags$li("avg_tree_height : nilai rataan tinggi pohon (dalam meter)"),
+                         tags$li("carbon_reduce : nilai co2e per satu rataan tingg pohon (dalam Ton)"),
+                         tags$li("total_carbon_reduce : nilai co2e per satu rataan tingg pohon dikali total_tree (dalam Ton)"),
+                         tags$li("tree_palnting_system : cara menanam pohon")
+                       ),
+                       br(),
+                     ),
+                     fluidRow(
+                       box(title = "Dataset Tree Monitoring",
+                           solidHeader = TRUE,
+                           status = "info",
+                           width = 12,
+                           DT::dataTableOutput(outputId = "dataset_table")
+                       ),
+                       div(
+                         class = "footer",
+                         includeHTML("include/footer.html")
+                       )
+                       
+                     )
+                   )
+                   
+                 ),
+               ),
+)   
+               

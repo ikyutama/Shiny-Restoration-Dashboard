@@ -1,0 +1,43 @@
+"0","carbon_date <- "
+"0","      monitoring_clean %>% "
+"0","      filter(species_name %in% ""Bruguiera gymnorrhiza"") %>% "
+"0","      group_by(date_monitoring) %>% "
+"0","      summarise(total = sum(total_carbon_reduce)) %>% "
+"0","      mutate(label = glue(""Tanggal Monitoring : {date_monitoring}"
+"0","                      Total CO2e: {comma(total, accuracy = 0.01)} Ton""))"
+"0","    "
+"0","    # Pembuatan Visual Statis"
+"0","    plot_carbon_1 <- "
+"0","      ggplot(data = carbon_date, mapping = aes(x = date_monitoring, "
+"0","                                                      y = comma(total, accuracy = 0.01))) +"
+"0","      geom_line(col = ""yellow"") +"
+"0","      geom_point(mapping = aes(text = label)) + # parameter text untuk line plot hanya bisa diletakan di bagian geom_point()"
+"0","      scale_y_continuous(label = comma)+ # untuk merapikan bagian sumbu y"
+"0","      labs(title = glue(""Total CO2e untuk jeni tanaman Bedasarkan Tanggal Monitoring""),"
+"0","           x = ""Tanggal Monitoring"","
+"0","           y = ""Total CO2e (Ton)"") +"
+"0","      theme_minimal()"
+"2","Warning in geom_point(mapping = aes(text = label)) :"
+"2","
+ "
+"2"," [38;5;252mIgnoring unknown aesthetics: [32mtext[38;5;252m[39m
+"
+"0","    "
+"0","    # Mengubah Visual Statis menjadi Interaktif"
+"0","    ggplotly(plot_carbon_1, tooltip = 'text')"
+"1","[1m[33mError[39m in `scale_y_continuous()`:[22m
+[38;5;252m[33m![38;5;252m Discrete values supplied to continuous scale.
+[36mℹ[38;5;252m Example values: [34m""9.93""[38;5;252m, [34m""21.62""[38;5;252m, [34m""6.66""[38;5;252m, [34m""29.44""[38;5;252m, and [34m""0.03""[38;5;252m[39m
+Backtrace:
+[90m  1. [39m[1mplotly[22m::ggplotly(plot_carbon_1, tooltip = ""text"")
+[90m  2. [39mplotly:::ggplotly.ggplot(plot_carbon_1, tooltip = ""text"")
+[90m  3. [39mplotly::gg2list(...)
+[90m  4. [39mplotly (local) ggplotly_build(p)
+[90m  5. [39mlayout$train_position(data, scale_x(), scale_y())
+     ...
+[90m 11. [39mggplot2 (local) FUN(X[[i]], ...)
+[90m 12. [39m[1mbase[22m::lapply(...)
+[90m 13. [39mggplot2 (local) FUN(X[[i]], ...)
+[90m 14. [39mscales[[i]][[method]](data[[var]][scale_index[[i]]])
+[90m 15. [39mggplot2 (local) train(..., self = self)
+"

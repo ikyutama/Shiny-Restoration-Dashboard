@@ -1,0 +1,126 @@
+---
+title: "Data Preparation"
+author: "Rizky Utama Pramudia"
+date: "2024-06-23"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+```{r}
+
+data_monitoring <- read.csv("dataset/data_tree_monitoring_2024.csv")
+head(data_monitoring)
+
+```
+
+```{r}
+str(data_monitoring)
+sum(data_monitoring$total_tree)
+```
+
+```{r}
+library(dplyr) # data prep
+library(lubridate) # date data prep
+
+monitoring_clean <- data_monitoring %>% 
+  mutate_at(.vars = c("monitoring_id", "species_name", "tree_planting_system"), 
+            .funs = as.factor) %>% 
+  mutate(tree_planting_date = ymd(tree_planting_date),
+         date_monitoring = ymd(date_monitoring)) %>% 
+  mutate(total_tree = as.integer(total_tree))
+
+str(monitoring_clean)
+```
+
+```{r}
+
+which(is.na(monitoring_clean))
+
+sum(monitoring_clean$total_tree)
+
+```
+
+```{r}
+
+tree_by_species <- monitoring_clean %>% 
+      group_by(species_name) %>% 
+      summarize(totaltree = sum(total_tree)) %>% 
+      filter(totaltree > 0) %>% 
+      arrange(-totaltree) %>% 
+      mutate(percent = round(totaltree / sum(totaltree) * 100, 2)) %>% 
+      mutate(label = glue("Species Name: {species_name}
+                      Total tree: {comma(totaltree)}")) %>% 
+      mutate(ymax = cumsum(percent)) %>% 
+      mutate(ymin = c(0, head(ymax, n= -1))) %>% 
+      mutate(labelPosition = (ymax + ymin)/2)
+
+tree_by_species
+```
+
+```{r}
+plot_overview_2 <- ggplot(tree_by_species, aes(ymax=ymax, ymin=ymin, xmax=4, xmin=3, fill=species_name)) +
+  geom_rect() +
+  geom_label( x=3.5, aes(y=labelPosition, label=label), size=3) +
+  scale_fill_brewer(palette=4) +
+  coord_polar(theta="y") +
+  xlim(c(2, 4)) +
+  theme_void() +
+  theme(legend.title = element_text(size = 12),
+            legend.text = element_text(size = 12)) +
+      labs(fill = "Species name")
+
+plot_overview_2
+#ggplotly(plot_overview_2)
+```
+
+```{r}
+height_by_species <- monitoring_clean %>% 
+      filter(tree_planting_system %in% "Ajir") %>% 
+      group_by(species_name) %>% 
+      summarise(avgh = mean(avg_tree_height)) %>% 
+      mutate(label = glue("Species name : {species_name}
+                      Average Height: {comma(avgh, accuracy = 0.01)} meter"))
+    
+    plot_pohon_1 <- ggplot(data = height_by_species, mapping = aes(x = avgh, 
+                                              y = reorder(species_name, avgh),
+                                              fill = avgh,
+                                              text = label)) +
+      geom_col() +
+      scale_fill_gradient(low = "red",
+                          high = "black") +
+      scale_x_continuous(labels = comma)+
+      labs(title = glue("Rata-Rata Tinggi Pohon bedasarkan sistem tanam : "),
+           x = "Rata-rata Tinggi (Meter)",
+           y = "") + 
+      theme_minimal() +
+      theme(legend.position = "none")
+    
+    # Mengubah Visual Statis menjadi Interaktif
+    ggplotly(plot_pohon_1, tooltip = 'text')
+
+```
+
+

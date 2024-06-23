@@ -1,0 +1,107 @@
+---
+title: "Briefing DV capstone"
+author: "Your Name"
+date: "`r Sys.Date()`"
+output: 
+ html_document:
+   toc: true
+   toc_float: true
+   highlight: zenburn
+   df_print: paged
+   theme: flatly
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+File ini berisi template untuk mejawab pertanyaan 5W+1H saat briefing Capstone Data Visualization sebagai langkah awal sebelum membuat Dashboard. Silakan Bapak/Ibu mengisi jawaban di bawah. 
+
+File ini tidak akan dinilai namun Bapak/Ibu **WAJIB** disubmit ke dalam classroom pada hari H briefing Capstone Data Visualization.
+
+# What
+
+Tentukan tujuan atau informasi yang ingin ditampilkan dalam dashboard
+
+**Jawab**
+Menampilkan informasi monitoring area restorasi penanaman pohon dan banyaknya carbon (CO2e) yg telah direduce
+
+Tujuan yang ingin dicapai atau informasi yang ingin disampaikan:
+
+- total carbon (CO2e) yang telah di reduce dari tahun 2023 - 2024 (all species & per species pohon)
+- rata" tinggi pohon dari 2023 - 2024 (per species pohon & per monitoring date)
+- survival rate pohon per monitoring date (per species) dari 2023-2024
+- total pohon yg di tanam by species
+
+# Who
+
+Untuk siapa dashboard ini dibuat? Siapa target pembaca dari dashboard ini?
+
+**Jawab**
+untuk kebutuhan lembaga yang peduli akan hutan di indonesia
+........
+
+# Why
+
+Apakah data yang dibuat relevan atau sesuai dengan tujuan? Mengapa?
+
+**Jawab**
+ya, karena akan menurunkan emisi karbon sangat penting saat ini. jadi kita bisa mengetahui jika menanam pohon jenis tertentu dapat menurunkan brp banyak emisi karbon per tahunnya
+.......
+
+# When
+
+Apakah data yang digunakan masih *up to date* atau masih relevan dengan kondisi sekarang? Apakah ada informasi tentang tanggal update terakhir dari data tersebut?
+ya saya memiliki data monitoring pohon di area restorasi di daerah Sumatera hingga April 2024
+**Jawab**
+
+.......
+
+
+# How
+
+Bagaimana Bapak/Ibu menggunakan visualisasi untuk menjawab tujuan yang telah disebutkan? 
+
+Buat plot yang akan dimasukkan ke dalam dashboard. Boleh dalam bentuk `ggplot` maupun `plotly`.
+
+**Jawab**
+
+Plot untuk menjawab tujuan pertama
+- barpot total carbon (CO2e) yg telah di reduce per species pohon
+
+Plot kedua
+- lineplot pertumbuhn pohon (tinggi pohon)
+
+Plot ketiga
+- lineplot survival rate (0-100%) pohon
+
+Plot keempat
+- plot doughnut jumlah pohon per species
+
+Buat chunk baru apabila ada lebih dari 3 plot.
+
+# Where
+
+Bagaimana desain layout atau tata letak dashboard yang akan dibuat?
+
+**Jawab**
+
+Contoh penulisan layout. 
+
+halaman pertama (Home)
+
+- row 1 : Pemaparan singkat tekait dashboard Carbon Emission
+- row 2 : info box (total carbon reduce, total pohon, total species)
+- row 3 : doughnat jumlah pohon per species
+- row 3 : barplot total carbon per species pohon (dengan filter species)
+-
+
+halaman kedua (Monitoring Pohon)
+
+- row 1 : select input species & datepicker range monitoring date
+- row 2 : lineplot pertumbuhn pohon (tinggi pohon)
+- row 3 : survival rate pohon (per species)
+
+Halamn Ketiga (Data)
+ row 1 : select input jenis data yg digunakan (raw data & data dengan perhitungan carbon)
+ row 2 : datatable data yg digunakan

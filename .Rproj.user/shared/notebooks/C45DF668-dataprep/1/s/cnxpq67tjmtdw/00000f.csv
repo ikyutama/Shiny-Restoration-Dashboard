@@ -1,0 +1,9 @@
+"0","ggplot() + #assign as object in environment"
+"0","      geom_bar_interactive(data = tree_by_species, stat = ""identity"", color = ""white"", aes(x = 2, y = prop, fill = name, tooltip = label)) + #Add tooltip to aes()"
+"0","      coord_polar(theta = ""y"", start = 0)+"
+"0","      scale_fill_manual(values = my_colors) +"
+"0","      theme_void() +"
+"0","      xlim(.5, 2.5)"
+"2","Error in geom_bar_interactive(data = tree_by_species, stat = ""identity"",  : 
+  could not find function ""geom_bar_interactive""
+"
